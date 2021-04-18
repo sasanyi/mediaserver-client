@@ -7,3 +7,5 @@ Jelenleg a szerver Flaskben van írva de gondolkodunk rajta, hogy djnago is meg�
 
 ## medi client
 A kliens lényegében az adást lebonyolító műsorvezetők számára érdekes. Ezen keresztül tudnak keresni a zenei adatbázisban. Ha egy adott zene pl a kívánságműsorhoz kell, akkor ezen keresztül le lehet tölteni. Ezt jelenleg egy egyszerű ftp kliensel képzeltem el. Tudjuk, hogy a szervern hol található az adott zene és minden műsorvezetőnek van FTP hozzáférése ezt felhasználva le lehet tölteni a zenéket. 
+
+Jelenleg a kliens is falsk alkalmazás, de bármilyen megoldás elképzelhető :) 
