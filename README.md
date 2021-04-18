@@ -5,7 +5,7 @@ A szerver fő feladata, hogy folymatosan figyelje a a rádió mappáját, amelyb
 
 Jelenleg a szerver Flaskben van írva de gondolkodunk rajta, hogy djnago is megérhetné. A szerver egy REST API-t is biztosít külső kliensek számára, amelyen keresztül lehetne a zenei adatbázsban keresni. Ez jelenleg a kliens számára a legfontosabb. Egy auth is jó lenne bele, hogy esetleg a műsorvezetői kliensbe egy bejelentkezés felület is legyen a későbbiekben ez tovább fejlesztés céljából lenne jó.
 
-## medi client
+## media client
 A kliens lényegében az adást lebonyolító műsorvezetők számára érdekes. Ezen keresztül tudnak keresni a zenei adatbázisban. Ha egy adott zene pl a kívánságműsorhoz kell, akkor ezen keresztül le lehet tölteni. Ezt jelenleg egy egyszerű ftp kliensel képzeltem el. Tudjuk, hogy a szervern hol található az adott zene és minden műsorvezetőnek van FTP hozzáférése ezt felhasználva le lehet tölteni a zenéket. 
 
-Jelenleg a kliens is falsk alkalmazás, de bármilyen megoldás elképzelhető :) 
+Jelenleg a kliens is flask alkalmazás, de bármilyen megoldás elképzelhető :) 
