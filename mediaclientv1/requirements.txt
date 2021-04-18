@@ -1,0 +1,8 @@
+flask
+sqlalchemy
+mutagen
+watchdog
+flask-socketio
+mysqlclient
+marshmallow
+marshmallow-sqlalchemy
