@@ -1,4 +1,4 @@
-# mediaserver-client projekt
+# r2-mediaserver-client projekt
 
 ## media szerver
 A szerver fő feladata, hogy folymatosan figyelje a a rádió mappáját, amelyben elhelyezésre kerülnek tematikusan a a zenék. Figyeli, folyamatosan, ha új zene kerül be vagy épp törölve lesz vagy egy adott file modosításra kerül. Ezért a Watchdog rész felel. Ha új zene kerül feltöltésre vagy törlése, akkor értelem szerűen az adatbázisból ezt törli vagy létrehozza. A zenei fájlok meta adatát is olvassa ezeket is elmenti. A másik fő része egy webes kis alkalmazás, ez jelenleg elég elmaradott. Szerepe, hogy az adatbázisban megtalálható zenéket lehessen listázni és a meta adatokat szerkeszteni. (Ezeket tudja jelenleg, de van mit optimalizálni a kód minőségén)
