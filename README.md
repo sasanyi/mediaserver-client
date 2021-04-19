@@ -24,14 +24,15 @@ Van gy jó példa pont SQLAlchemy + FastAPI + PythonDepedencyInjector ( https://
 
 Egyenlőre magának a webservice-nek pusztány annyit kell tudni, hogy le lehessen kérdezni az összes zenét, erre én továbbra is támogatom a pagebale ötletet valamint esetleg egy két filter paraméter nem ártana a különböző meta adatok szerint. 
 
-A szerver másik része maga a library kezelő. A library kezelő igazából nagyjából rendebn is lenne csak valamilyen forában jó lenne lekülöníteni a többi részétől az alkalmazásnak és átültetni ezt is OOP keretek közé. Igazából teljesen futthatna a háttérben. 
+A szerver másik része maga a library kezelő. A library kezelő igazából nagyjából rendben is lenne csak valamilyen formában jó lenne elkülöníteni a többi részétől az alkalmazásnak és átültetni ezt is OOP keretek közé. Igazából teljesen futthatna a háttérben. 
 
-A media serverből a kliens teljesen ki fog kerülni és a MediaServerClient fogaj ellátni ezt a feladatot is a definált API-n keresztül
+A media serverből a kliens teljesen ki fog kerülni és a MediaClient fogja ellátni ezt a feladatot is a definált API-n keresztül
 
-A FastAPI támogatja az OAuth-ot ez tök jó lenne, mert maga a MediaServerClient egy egyszerű webalkalmazás lenne, amit szeretnénk elválasztani a szervertől, hogy könnyen mozgatható legyen a szerver nélkül is. 
+A FastAPI támogatja az OAuth-ot ez tök jó lenne, mert maga a MediaClient egy egyszerű webalkalmazás lenne, amit szeretnénk elválasztani a szervertől, hogy könnyen mozgatható legyen a szerver nélkül is. 
 
 ### MediaClient
 
-Igazából nagyjából az egész lecserélésre kerül HTML + CSS + JS fornendre és maga a python rész pusztán annyiból fog állni, mint most. Lesz, ami betölti a kliens oldalait, valamint egy download url, amely lecsrélésre kerül és kap egy zenei id-t és az annak megfelelő zenéni fájlhoz tartozó path alapján letölti egy mappába a zenét első körben FTP kliensen keresztül. Itt fontos, hogy álíltható legyen felületből a különböző beálíltás, hogy a műsorvezetők ezt könynedén használni tudják. Első körben itt is JSON konfigurációs fájlt fogunk használni később ez is cserélhető lenne. 
-A MediaClient-en keresztül lehet regisztrálni a MediaSzerverre és be lehet jelentkezni, hogy elérhető váljanak azok az API végpontok, amelyek nem publikusak. Ebből későbbiekben egyre több lesz, mert szeretnénk, ha a Hallgatók túdnánka közvetlenül a MediaServeren keresztül eznét kérni, de ez már nagy a jövő zenéje :) 
+Igazából nagyjából az egész lecserélésre kerül HTML + CSS + JS forntendre és maga a python rész pusztán annyiból fog állni, mint most. Lesz, ami betölti a kliens oldalait, valamint egy download url, amely lecsrélésre kerül és kap egy zenei id-t és az annak megfelelő zenéni fájlhoz tartozó path alapján letölti egy mappába a zenét első körben FTP kliensen keresztül. Itt fontos, hogy álíltható legyen felületből a különböző beállítás (pl hova mentse a letöltött zenéket, milyen ftp adatokkal lépjen be a szerverre stb), hogy a műsorvezetők ezt könnyedén használni tudják. Első körben itt is JSON konfigurációs fájlt fogunk használni később ez is cserélhető lenne.  Ennek megvalósításra meghagynánk a Falsk-et. 
+
+A MediaClient-en keresztül lehet regisztrálni a műsorvezetőket a MediaSzerverre és be lehet jelentkezni, hogy elérhető váljanak azok az API végpontok, amelyek nem publikusak. Ebből későbbiekben egyre több lesz, mert szeretnénk, ha a Hallgatók túdnánka közvetlenül a MediaServeren keresztül eznét kérni, de ez már nagy a jövő zenéje :)
 
