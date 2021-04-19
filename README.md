@@ -10,7 +10,7 @@ A kliens lényegében az adást lebonyolító műsorvezetők számára érdekes.
 
 Jelenleg a kliens is flask alkalmazás, de bármilyen megoldás elképzelhető :) 
 
-## aktuális ötletek
+## Elképzelés
 
 ### MediaServer
 
