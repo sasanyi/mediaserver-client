@@ -32,4 +32,6 @@ def walk_on_files(path: str, patterns: list) -> None:
     files = find_files_on_path_with_patterns(path, patterns)
     for i, file in tqdm(enumerate(files)):
         print(i, file)
+        # TODO save files to db
+
     print("Finished walking on files...")
