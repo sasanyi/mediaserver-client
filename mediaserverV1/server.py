@@ -1,11 +1,10 @@
-import os
-import unittest
 import json
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 
-from app.app import create_app, db, walk_on_files
+from app.app import create_app, walk_on_files, db
 from app.common.config import Config
+from app.webservice import blueprint
 
 
 def read_config_json(file: str = "config.json") -> dict:
@@ -44,8 +43,10 @@ def set_up_config(configfile: dict) -> Config:
 
 
 cfg = set_up_config(read_config_json())
-
 app = create_app(cfg)
+app.register_blueprint(blueprint)
+
+app.app_context().push()
 
 manager = Manager(app)
 migrate = Migrate(app, db)

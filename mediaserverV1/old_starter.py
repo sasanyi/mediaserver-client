@@ -1,21 +1,13 @@
 import json
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
-from app.common.config import Config
-from common.app import *
+
 from deamon.watchdogevents import *
-from sqlalchemy import create_engine
-from common.utils import *
-from common.webservice import *
-from flask_socketio import SocketIO
 
 
 def startWatchdog():
-    if not Config.isSetted():
-        raise RuntimeError("Server not configured")
 
-    config = Config.config("library-watchdog")
-
+    config = {}
     print("Starting watchdog with config: " + str(config))
     patterns = config["patterns"]
     ignore_patterns = config["ignore-patterns"]
@@ -41,35 +33,8 @@ def startWatchdog():
     return observer
 
 
-def startWebService(observer=None):
-    webservice.config["DEBUG"] = Config.config("web-server")["debug"]
-    webservice.config["SECRET_KEY"] = b'_5#y2L"F4Q8z\n\xec]/'
-
-    socketio = SocketIO(webservice)
-    socketio.run(webservice, port=Config.config("web-server")["port"], host='0.0.0.0')
-    stopWatchdog(observer)
-
-
 def stopWatchdog(observer):
     print("Stopping watchdog...")
     observer.stop()
     observer.join()
     print("Watchdog stopped...")
-
-
-def main():
-    configfile = readConfigJson()
-    setUpConfig(configfile)
-
-    setUpDatabase()
-
-    walkOnFiles(Config.config("library-watchdog")["path"])
-
-    observer = startWatchdog()
-
-    startWebService(observer)
-    startWebService()
-
-
-if __name__ == '__main__':
-    main()
