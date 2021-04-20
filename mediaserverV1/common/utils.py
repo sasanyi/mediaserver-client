@@ -5,7 +5,7 @@ from sqlalchemy.exc import *
 from common.models import *
 from common.app import App
 import re
-from common.config import logger
+from app.common.config import logger
 import os
 
 def findFilesInDirWithPattern(d, patterns):
