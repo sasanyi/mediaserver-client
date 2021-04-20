@@ -8,9 +8,7 @@ from .common.config import Config
 from .common.utils import find_files_on_path_with_patterns
 from tqdm import tqdm
 
-
 from flask_injector import FlaskInjector
-
 
 db = SQLAlchemy()
 flask_bcrypt = Bcrypt()
@@ -18,12 +16,15 @@ flask_bcrypt = Bcrypt()
 
 def create_app(config: Config) -> Flask:
     app = Flask(__name__)
-    from app.dependencies import configure
+
     app.config.from_object(config.flask_config())
 
     db.init_app(app)
     flask_bcrypt.init_app(app)
+    
+    from app.dependencies import configure
     FlaskInjector(app=app, modules=[configure])
+    
     return app
 
 

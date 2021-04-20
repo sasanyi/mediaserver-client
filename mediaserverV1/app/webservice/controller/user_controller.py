@@ -9,19 +9,19 @@ api = UserDto.api
 _user = UserDto.user
 
 
-@api.route('/user')
 class UserController(Resource):
-    @inject
-    def __init__(self, user_service: UserService, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.user_service = user_service
+        self.user_service = UserService()
 
+    @api.route('/user')
     @api.doc('list_of_registered_users')
     @api.marshal_list_with(_user, envelope='data')
     def get(self):
         """List all registered users"""
         return self.user_service.get_all_users()
 
+    @api.route('/user')
     @api.response(201, 'User successfully created.')
     @api.doc('create a new user')
     @api.expect(_user, validate=True)
@@ -41,7 +41,7 @@ class UserController(Resource):
             }
             return response_object, 409
 
-    @api.route('/<public_id>')
+    @api.route('/user/<public_id>')
     @api.param('public_id', 'The User identifier')
     @api.response(404, 'User not found.')
     @api.doc('get a user')
