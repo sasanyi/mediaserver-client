@@ -1,10 +1,13 @@
 import json
+
+from flask_injector import FlaskInjector
 from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
+from injector import Binder, singleton
 
 from app.app import create_app, walk_on_files, db
 from app.common.config import Config
-from app.webservice import blueprint
+from app.webservice.blueprint import blueprint
 
 
 def read_config_json(file: str = "config.json") -> dict:
@@ -42,11 +45,26 @@ def set_up_config(configfile: dict) -> Config:
     return config
 
 
+def configure(binder: Binder) -> None:
+
+    """Repositories"""
+    from app.common.repository.user_repository import UserRepository
+
+    """Services"""
+    from app.webservice.service.user_service import UserService
+
+    binder.bind(UserRepository, to=UserRepository, scope=singleton)
+    binder.bind(UserService, to=UserService, scope=singleton)
+
+
 cfg = set_up_config(read_config_json())
 app = create_app(cfg)
 app.register_blueprint(blueprint)
 
 app.app_context().push()
+
+FlaskInjector(app=app, modules=[configure])
+
 
 manager = Manager(app)
 migrate = Migrate(app, db)
@@ -58,7 +76,7 @@ manager.add_command('db', MigrateCommand)
 def run(task):
     if task == "server":
         print("Starting web app...")
-        app.run(host="0.0.0.0", port=cfg.config("web-server")["port"])
+        app.run(port=cfg.config("web-server")["port"])
     elif task == "walk-on-files":
         walk_on_files(cfg.config("walk-on-files")["path"], cfg.config("walk-on-files")["walk-patterns"])
 

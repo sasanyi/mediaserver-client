@@ -38,3 +38,4 @@ six==1.15.0
 SQLAlchemy==1.4.9
 tqdm==4.60.0
 watchdog==2.0.2
+Werkzeug==0.16.1

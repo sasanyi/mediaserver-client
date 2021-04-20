@@ -9,25 +9,26 @@ api = UserDto.api
 _user = UserDto.user
 
 
-class UserController(Resource):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.user_service = UserService()
+@api.route('/')
+class UserList(Resource):
+    @inject
+    def __init__(self, user_service: UserService, api):
+        super().__init__(api)
+        self.user_service = user_service
 
-    @api.route('/user')
     @api.doc('list_of_registered_users')
-    @api.marshal_list_with(_user, envelope='data')
+    @api.marshal_list_with(_user)
     def get(self):
         """List all registered users"""
         return self.user_service.get_all_users()
 
-    @api.route('/user')
     @api.response(201, 'User successfully created.')
     @api.doc('create a new user')
     @api.expect(_user, validate=True)
     def post(self):
         """Creates a new User """
         data = request.json
+        print(data)
         if self.user_service.save_new_user(data):
             response_object = {
                 'status': 'success',
@@ -40,16 +41,3 @@ class UserController(Resource):
                 'message': 'User already exists. Please Log in.',
             }
             return response_object, 409
-
-    @api.route('/user/<public_id>')
-    @api.param('public_id', 'The User identifier')
-    @api.response(404, 'User not found.')
-    @api.doc('get a user')
-    @api.marshal_with(_user)
-    def get(self, public_id):
-        """get a user given its identifier"""
-        user = self.user_service.get_user_by_id(public_id)
-        if not user:
-            api.abort(404)
-        else:
-            return user
