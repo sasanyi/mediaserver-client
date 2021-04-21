@@ -1,3 +1,4 @@
+from app.app import db
 from app.common.models.file import File
 
 
@@ -9,6 +10,5 @@ class FileRepository(object):
         File.query.filter_by(path=path).first()
 
     def save_changes(self, data: File):
-        from ...app import db
         db.session.add(data)
         db.session.commit()

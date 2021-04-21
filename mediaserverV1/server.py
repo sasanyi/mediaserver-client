@@ -1,4 +1,10 @@
-import json
+"""Repositories"""
+from app.common.repositories.user_repository import UserRepository
+from app.common.repositories.file_repository import FileRepository
+
+"""Services"""
+from app.webservice.services.user_service import UserService
+from app.webservice.services.file_service import FileService
 
 from flask_injector import FlaskInjector
 from flask_migrate import Migrate, MigrateCommand
@@ -8,6 +14,8 @@ from injector import Binder, singleton
 from app.app import create_app, walk_on_files, db
 from app.common.config import Config
 from app.webservice.blueprint import blueprint
+
+import json
 
 
 def read_config_json(file: str = "config.json") -> dict:
@@ -46,16 +54,8 @@ def set_up_config(configfile: dict) -> Config:
 
 
 def configure_di(binder: Binder) -> None:
-    """Repositories"""
-    from app.common.repositories.user_repository import UserRepository
-    from app.common.repositories.file_repository import FileRepository
-
     binder.bind(UserRepository, to=UserRepository, scope=singleton)
     binder.bind(FileRepository, to=FileRepository, scope=singleton)
-
-    """Services"""
-    from app.webservice.services.user_service import UserService
-    from app.webservice.services.file_service import FileService
 
     binder.bind(UserService, to=UserService, scope=singleton)
     binder.bind(FileService, to=FileService, scope=singleton)

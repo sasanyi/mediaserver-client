@@ -1,3 +1,4 @@
+from app.app import db
 from app.common.models.user import User
 
 
@@ -16,6 +17,5 @@ class UserRepository(object):
         return User.query.filter_by(email=email).first()
 
     def save_changes(self, data: User):
-        from ...app import db
         db.session.add(data)
         db.session.commit()
