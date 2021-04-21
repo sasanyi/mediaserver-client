@@ -47,15 +47,15 @@ def set_up_config(configfile: dict) -> Config:
 
 def configure_di(binder: Binder) -> None:
     """Repositories"""
-    from app.common.repository.user_repository import UserRepository
-    from app.common.repository.file_repository import FileRepository
+    from app.common.repositories.user_repository import UserRepository
+    from app.common.repositories.file_repository import FileRepository
 
     binder.bind(UserRepository, to=UserRepository, scope=singleton)
     binder.bind(FileRepository, to=FileRepository, scope=singleton)
 
     """Services"""
-    from app.webservice.service.user_service import UserService
-    from app.webservice.service.file_service import FileService
+    from app.webservice.services.user_service import UserService
+    from app.webservice.services.file_service import FileService
 
     binder.bind(UserService, to=UserService, scope=singleton)
     binder.bind(FileService, to=FileService, scope=singleton)

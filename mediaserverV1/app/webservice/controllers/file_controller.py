@@ -1,10 +1,10 @@
 from flask import request
 from flask_restplus import Resource
 from injector import inject
-from ..dto.meta_dto import MetaDto
-from ..dto.file_dto import FileDto
+from app.webservice.dtos.meta_dto import MetaDto
+from app.webservice.dtos.file_dto import FileDto
 
-from ..service.file_service import FileService
+from app.webservice.services.file_service import FileService
 
 meta_api = MetaDto.api
 file_api = FileDto.api

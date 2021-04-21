@@ -1,10 +1,11 @@
-from ..model.file import File
+from app.common.models.file import File
+
 
 class FileRepository(object):
     def get_all_files(self) -> list:
         return File.query.all()
 
-    def get_file_by_path(self, path:str):
+    def get_file_by_path(self, path: str):
         File.query.filter_by(path=path).first()
 
     def save_changes(self, data: File):

@@ -1,5 +1,5 @@
 from injector import inject
-from ...common.repository.file_repository import FileRepository
+from app.common.repositories.file_repository import FileRepository
 
 
 class FileService(object):

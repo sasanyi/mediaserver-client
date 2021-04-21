@@ -2,8 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-from .common.config import Config
-from .common.utils import find_files_on_path_with_patterns
+from app.common.config import Config
+from app.common.utils import find_files_on_path_with_patterns
 from tqdm import tqdm
 
 db = SQLAlchemy()

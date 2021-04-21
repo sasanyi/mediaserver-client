@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, fields
-from .meta_dto import MetaDto
+from app.webservice.dtos.meta_dto import MetaDto
 
 
 class FileDto:

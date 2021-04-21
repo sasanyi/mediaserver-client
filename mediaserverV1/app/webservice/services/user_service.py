@@ -1,7 +1,7 @@
 from injector import inject
 
-from ...common.repository.user_repository import UserRepository
-from ...common.model.user import User
+from app.common.repositories.user_repository import UserRepository
+from app.common.models.user import User
 
 import uuid
 import datetime

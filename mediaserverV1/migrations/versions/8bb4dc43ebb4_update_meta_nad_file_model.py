@@ -1,4 +1,4 @@
-"""update meta nad file model
+"""update meta nad file models
 
 Revision ID: 8bb4dc43ebb4
 Revises: 
