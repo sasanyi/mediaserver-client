@@ -1,136 +1,88 @@
 import json
-from watchdog.observers import Observer
-from watchdog.events import PatternMatchingEventHandler
-from common.config import Config
-from common.app import *
-from deamon.watchdogevents import *
-from sqlalchemy import create_engine
-from common.utils import *
-from common.webservice import *
-from flask_socketio import SocketIO
+
+from flask_injector import FlaskInjector
+from flask_migrate import Migrate, MigrateCommand
+from flask_script import Manager
+from injector import Binder, singleton
+
+from app.app import create_app, walk_on_files, db
+from app.common.config import Config
+from app.webservice.blueprint import blueprint
 
 
-def readConfigJson(file="config.json"):
+def read_config_json(file: str = "config.json") -> dict:
     with open(file, mode="r") as file:
         config = json.load(file)
         return config
 
 
-def setUpConfig(configfile):
-    print("Setting up the server...")
+def set_up_config(configfile: dict) -> Config:
+    config = Config()
 
-    Config.set("web-server", "port", int(configfile["web-server"]["port"]))
-    Config.set("web-server", "debug", configfile["web-server"]["debug"] == 'True')
+    config.set("web-server", "port", int(configfile["web-server"]["port"]))
+    config.set("web-server", "debug", configfile["web-server"]["debug"] == 'True')
 
-    Config.set("library-watchdog", "patterns", configfile["library-watchdog"]["patterns"])
-    Config.set("library-watchdog", "ignore-patterns", configfile["library-watchdog"]["ignore-patterns"])
-    Config.set("library-watchdog", "ignore-directories", configfile["library-watchdog"]["ignore-directories"] == 'True')
-    Config.set("library-watchdog", "case-sensitive", configfile["library-watchdog"]["case-sensitive"] == 'True')
-    Config.set("library-watchdog", "path", configfile["library-watchdog"]["path"])
-    Config.set("library-watchdog", "recursively", configfile["library-watchdog"]["recursively"] == 'True')
+    config.set("library-watchdog", "patterns", configfile["library-watchdog"]["patterns"])
+    config.set("library-watchdog", "ignore-patterns", configfile["library-watchdog"]["ignore-patterns"])
+    config.set("library-watchdog", "ignore-directories", configfile["library-watchdog"]["ignore-directories"] == 'True')
+    config.set("library-watchdog", "case-sensitive", configfile["library-watchdog"]["case-sensitive"] == 'True')
+    config.set("library-watchdog", "path", configfile["library-watchdog"]["path"])
+    config.set("library-watchdog", "recursively", configfile["library-watchdog"]["recursively"] == 'True')
 
-    Config.set("database", "type", configfile["database"]["type"])
-    Config.set("database", "host", configfile["database"]["host"])
-    Config.set("database", "port", int(configfile["database"]["port"]))
-    Config.set("database", "user", configfile["database"]["user"])
-    Config.set("database", "password", configfile["database"]["password"])
-    Config.set("database", "database", configfile["database"]["database"])
+    config.set("database", "type", configfile["database"]["type"])
+    config.set("database", "host", configfile["database"]["host"])
+    config.set("database", "port", int(configfile["database"]["port"]))
+    config.set("database", "user", configfile["database"]["user"])
+    config.set("database", "password", configfile["database"]["password"])
+    config.set("database", "database", configfile["database"]["database"])
+    config.set("database", "preserve_context_on_exception", configfile["database"]["preserve_context_on_exception"])
+    config.set("database", "sqlalchemy_track_modifications", configfile["database"]["sqlalchemy_track_modifications"])
 
-    Config.set("startup", "walk-patterns", configfile["startup"]["walk-patterns"])
+    config.set("walk-on-files", "walk-patterns", configfile["walk-on-files"]["walk-patterns"])
+    config.set("walk-on-files", "path", configfile["walk-on-files"]["path"])
+    config.set_configured()
 
-    Config.setSetted()
-
-    print("Server configured")
-
-
-def setUpDatabase():
-    if not Config.isSetted():
-        raise RuntimeError("Server not configured")
-
-    engine = create_engine('{}://{}:{}@{}:{}/{}?charset=utf8'.format(Config.config("database")["type"],
-                                                                        Config.config("database")["user"],
-                                                                        Config.config("database")["password"],
-                                                                        Config.config("database")["host"],
-                                                                        Config.config("database")["port"],
-                                                                        Config.config("database")["database"]),
-                           connect_args={}, encoding='utf8', convert_unicode=True)
-
-    db = Database(engine)
-    App.setDb(db)
+    return config
 
 
-def walkOnFiles(path):
-    print("Start walking on files...")
+def configure_di(binder: Binder) -> None:
+    """Repositories"""
+    from app.common.repository.user_repository import UserRepository
+    from app.common.repository.file_repository import FileRepository
 
-    files = findFilesInDirWithPattern(path, Config.config("startup")["walk-patterns"])
+    binder.bind(UserRepository, to=UserRepository, scope=singleton)
+    binder.bind(FileRepository, to=FileRepository, scope=singleton)
 
-    printProgressBar(0, len(files), prefix='Progress:', suffix='Complete', length=50)
+    """Services"""
+    from app.webservice.service.user_service import UserService
+    from app.webservice.service.file_service import FileService
 
-    for i, file in enumerate(files):
-        saveMusicFileToDb(file)
-        printProgressBar(i + 1, len(files), prefix='Progress:', suffix='Complete', length=50)
-
-
-def startWatchdog():
-    if not Config.isSetted():
-        raise RuntimeError("Server not configured")
-
-    config = Config.config("library-watchdog")
-
-    print("Starting watchdog with config: " + str(config))
-    patterns = config["patterns"]
-    ignore_patterns = config["ignore-patterns"]
-    ignore_directories = config["ignore-directories"]
-    case_sensitive = config["case-sensitive"]
-    path = config["path"]
-    recursively = config["recursively"]
-
-    watchdog_events = PatternMatchingEventHandler(patterns=patterns, ignore_patterns=ignore_patterns,
-                                                  ignore_directories=ignore_directories, case_sensitive=case_sensitive)
-    watchdog_events.on_created = on_created
-    watchdog_events.on_deleted = on_deleted
-    watchdog_events.on_modified = on_modified
-    watchdog_events.on_moved = on_moved
-
-    observer = Observer()
-    observer.schedule(event_handler=watchdog_events, recursive=recursively, path=path)
-    observer.daemon = True
-
-    observer.start()
-    print("Watchdog started...")
-
-    return observer
+    binder.bind(UserService, to=UserService, scope=singleton)
+    binder.bind(FileService, to=FileService, scope=singleton)
 
 
-def startWebService(observer=None):
-    webservice.config["DEBUG"] = Config.config("web-server")["debug"]
-    webservice.config["SECRET_KEY"] = b'_5#y2L"F4Q8z\n\xec]/'
+cfg = set_up_config(read_config_json())
+app = create_app(cfg)
+app.register_blueprint(blueprint)
 
-    socketio = SocketIO(webservice)
-    socketio.run(webservice, port=Config.config("web-server")["port"], host='0.0.0.0')
-    stopWatchdog(observer)
+app.app_context().push()
 
+FlaskInjector(app=app, modules=[configure_di])
 
-def stopWatchdog(observer):
-    print("Stopping watchdog...")
-    observer.stop()
-    observer.join()
-    print("Watchdog stopped...")
+manager = Manager(app)
+migrate = Migrate(app, db)
+
+manager.add_command('db', MigrateCommand)
 
 
-def main():
-    configfile = readConfigJson()
-    setUpConfig(configfile)
-
-    setUpDatabase()
-
-    walkOnFiles(Config.config("library-watchdog")["path"])
-
-    observer = startWatchdog()
-
-    startWebService(observer)
-    startWebService()
+@manager.command
+def run(task):
+    if task == "server":
+        print("Starting web app...")
+        app.run(port=cfg.config("web-server")["port"])
+    elif task == "walk-on-files":
+        walk_on_files(cfg.config("walk-on-files")["path"], cfg.config("walk-on-files")["walk-patterns"])
 
 
 if __name__ == '__main__':
-    main()
+    manager.run()

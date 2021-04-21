@@ -1,8 +1,7 @@
 {
   "web-server": {
     "port": 8088,
-    "debug": "True",
-    "testing": "True"
+    "debug": "True"
   },
   "library-watchdog": {
     "patterns": [
@@ -18,20 +17,17 @@
   },
   "database": {
     "type": "mysql",
-    "host": "localhost",
+    "host": "",
     "port": 3306,
-    "user": "root",
+    "user": "",
     "password": "",
-    "database": "r2database",
-    "preserve_context_on_exception": "False",
-    "sqlalchemy_track_modifications": "False"
+    "database": ""
   },
-  "walk-on-files": {
+  "startup": {
     "walk-patterns": [
       ".mp3",
       ".waw",
       ".flac"
-    ],
-    "path": "./"
+    ]
   }
 }
