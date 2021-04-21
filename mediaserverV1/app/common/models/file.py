@@ -1,7 +1,7 @@
 from app.app import db
 import datetime
 from sqlalchemy.ext.hybrid import hybrid_property
-from .meta import Meta
+from app.common.models.meta import Meta
 import re
 
 
