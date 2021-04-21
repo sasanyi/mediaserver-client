@@ -1,8 +1,8 @@
 from ...app import db
 import datetime
-import re
 from sqlalchemy.ext.hybrid import hybrid_property
 from .meta import Meta
+import re
 
 
 class File(db.Model):
@@ -19,3 +19,7 @@ class File(db.Model):
     @hybrid_property
     def real_path(self):
         return re.sub(r'\\(.)', r'\1', self.path)
+
+    @real_path.setter
+    def real_path(self, value):
+        self.path = re.escape(value)

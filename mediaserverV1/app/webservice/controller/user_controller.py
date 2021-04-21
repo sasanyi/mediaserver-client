@@ -28,7 +28,6 @@ class UserRoot(Resource):
     def post(self):
         """Creates a new User """
         data = request.json
-        print(data)
         if self.user_service.save_new_user(data):
             response_object = {
                 'status': 'success',

@@ -8,9 +8,9 @@ import datetime
 
 
 class UserService(object):
+
     @inject
     def __init__(self, user_repository: UserRepository):
-        print(user_repository)
         self.user_repository = user_repository
 
     def save_new_user(self, user: dict) -> bool:
@@ -29,7 +29,6 @@ class UserService(object):
 
     def get_user_by_id(self, id: str) -> User:
         return self.user_repository.get_user_by_id(id)
-
 
     def get_all_users(self) -> list:
         return self.user_repository.get_all_users()

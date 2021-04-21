@@ -45,16 +45,20 @@ def set_up_config(configfile: dict) -> Config:
     return config
 
 
-def configure(binder: Binder) -> None:
-
+def configure_di(binder: Binder) -> None:
     """Repositories"""
     from app.common.repository.user_repository import UserRepository
+    from app.common.repository.file_repository import FileRepository
+
+    binder.bind(UserRepository, to=UserRepository, scope=singleton)
+    binder.bind(FileRepository, to=FileRepository, scope=singleton)
 
     """Services"""
     from app.webservice.service.user_service import UserService
+    from app.webservice.service.file_service import FileService
 
-    binder.bind(UserRepository, to=UserRepository, scope=singleton)
     binder.bind(UserService, to=UserService, scope=singleton)
+    binder.bind(FileService, to=FileService, scope=singleton)
 
 
 cfg = set_up_config(read_config_json())
@@ -63,8 +67,7 @@ app.register_blueprint(blueprint)
 
 app.app_context().push()
 
-FlaskInjector(app=app, modules=[configure])
-
+FlaskInjector(app=app, modules=[configure_di])
 
 manager = Manager(app)
 migrate = Migrate(app, db)

@@ -1,5 +1,3 @@
-from injector import inject
-
 from ..model.user import User
 
 
