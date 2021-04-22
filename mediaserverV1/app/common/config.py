@@ -1,4 +1,4 @@
-class FlaskConfig(object):
+class FlaskConfig():
     DEBUG = False
     TESTING = False
     DB_SERVER = 'localhost'
@@ -15,7 +15,7 @@ class FlaskConfig(object):
         return '{}://{}:{}@{}/{}'.format(self.DRIVER, self.USER, self.PASSWORD, self.DB_SERVER, self.DATABASE)
 
 
-class Config(object):
+class Config():
     __flask_config: FlaskConfig = None
     __conf = {
         "web-server": {

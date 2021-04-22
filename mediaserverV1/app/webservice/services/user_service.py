@@ -1,13 +1,26 @@
+import datetime
+from typing import List
+import uuid
+import abc
 from injector import inject
 
-from app.common.repositories.user_repository import UserRepository
 from app.common.models.user import User
-
-import uuid
-import datetime
+from app.common.repositories.user_repository import UserRepository
 
 
-class UserService(object):
+class UserServiceAbstract(abc.ABC):
+    @abc.abstractmethod
+    def save_new_user(self, user: dict) -> bool:
+        pass
+    @abc.abstractmethod
+    def get_user_by_id(self, id: str) -> User:
+        pass
+    @abc.abstractmethod
+    def get_all_users(self) -> list:
+        pass
+
+
+class UserService(UserServiceAbstract):
 
     @inject
     def __init__(self, user_repository: UserRepository):
@@ -30,5 +43,5 @@ class UserService(object):
     def get_user_by_id(self, id: str) -> User:
         return self.user_repository.get_user_by_id(id)
 
-    def get_all_users(self) -> list:
+    def get_all_users(self) -> List[User]:
         return self.user_repository.get_all_users()

@@ -1,13 +1,14 @@
+from typing import List
 from app.app import db
 from app.common.models.user import User
 
 
-class UserRepository(object):
+class UserRepository:
 
     def create_user(self, user: User):
         self.save_changes(user)
 
-    def get_all_users(self) -> list:
+    def get_all_users(self) -> List[User]:
         return User.query.all()
 
     def get_user_by_id(self, public_id: str) -> User:
