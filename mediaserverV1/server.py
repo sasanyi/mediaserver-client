@@ -1,3 +1,6 @@
+from app.common.utils import find_files_on_path_with_patterns
+from tqdm import tqdm
+from app.common.file.music_file_meta_data import MusicFileMetaData
 """Repositories"""
 from app.common.repositories.user_repository import UserRepository
 from app.common.repositories.file_repository import FileRepository
@@ -11,7 +14,7 @@ from flask_migrate import Migrate, MigrateCommand
 from flask_script import Manager
 from injector import Binder, singleton
 
-from app.app import create_app, walk_on_files, db
+from app.app import create_app, db
 from app.common.config import Config
 from app.webservice.blueprint import blueprint
 
@@ -73,6 +76,15 @@ manager = Manager(app)
 migrate = Migrate(app, db)
 
 manager.add_command('db', MigrateCommand)
+
+
+def walk_on_files(path: str, patterns: list) -> None:
+    print("Start walking on files...")
+    files = find_files_on_path_with_patterns(path, patterns)
+    for i, file in tqdm(enumerate(files)):
+        music_file = MusicFileMetaData.load(file, FileRepository())
+        music_file.commit()
+    print("Finished walking on files...")
 
 
 @manager.command
