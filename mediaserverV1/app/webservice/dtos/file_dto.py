@@ -1,4 +1,4 @@
-from flask_restplus import Namespace, fields
+from flask_restx import Namespace, fields
 from app.webservice.dtos.meta_dto import MetaDto
 
 
