@@ -1,5 +1,5 @@
 from flask import request
-from flask_restplus import Resource
+from flask_restx import Resource
 from injector import inject
 from app.webservice.dtos.meta_dto import MetaDto
 from app.webservice.dtos.file_dto import FileDto
