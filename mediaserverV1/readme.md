@@ -5,7 +5,7 @@ A szerver fő feladata, hogy folymatosan figyelje a a rádió mappáját, amelyb
 
 Jelenleg a szerver Flaskben van írva. A szerver egy REST API-t is biztosít külső kliensek számára, amelyen keresztül lehetne a zenei adatbázsban keresni. Ez jelenleg a kliens számára a legfontosabb. Egy auth is jó lenne bele, hogy esetleg a műsorvezetői kliensbe egy bejelentkezés felület is legyen a későbbiekben ez tovább fejlesztés céljából lenne jó.
 
-
+___
 * ## Further steps
 Az egyik legfontosabb lépés a szerver rendberakása, mert ez a központja az egész mókának. Itt is több teendő van. A legfontosabb lenne átstruktúrálni a kódot és tényelegesen szétválasztani a különböző rétegeket. 
 Mindenképp a Modell Controller réteget szépen el kell különíteni de akár egy olyan struktúrát is el tudok képzelni, hogy Controller Service Repository és Model. A repository (dao) réteg talán azért lenne jó, mert azt akár használhatná a Watchdog is minden további nélkül.
@@ -18,4 +18,22 @@ A szerver másik része maga a library kezelő. A library kezelő igazából nag
 
 A media serverből a kliens teljesen ki fog kerülni és a MediaClient fogja ellátni ezt a feladatot is a definált API-n keresztül
 
-A Flaskhez léteznek JWT támogtaó library ez tök jó lenne, mert maga a MediaClient egy egyszerű webalkalmazás lenne, amit szeretnénk elválasztani a szervertől, hogy könnyen mozgatható legyen a szerver nélkül is. 
+A Flaskhez léteznek JWT támogtaó library ez tök jó lenne, mert maga a MediaClient egy egyszerű webalkalmazás lenne, amit szeretnénk elválasztani a szervertől, hogy könnyen mozgatható legyen a szerver nélkül is.
+
+___
+* ## Prerequisites _( for developing behind docker images )_
+    * ### docker _( enough because everything happens in the docker containers )_
+
+
+* ## CLI - Makefile _( for Unix systems )_
+    * ### The whole project is controllable via make commands
+        1. #### **make image-build**
+        2. #### **make network-create**
+        3. #### **make venv**
+        4. #### **make install**
+
+* ## Docker commands _( where there is no shell )_
+    1. #### **docker-compose --file ./configs/docker/docker-compose.yml build mediaserver**
+    2. #### **docker network create mediaserver-network**
+    3. #### **docker-compose --file ./configs/docker/docker-compose.yml --project-name mediaserver-1 run --user=user --rm mediaserver python3 -m venv .venv**
+    4. #### **docker-compose --file ./configs/docker/docker-compose.yml --project-name mediaserver-1 run --user=user --rm mediaserver .venv/bin/pip install -r requirements.txt**
