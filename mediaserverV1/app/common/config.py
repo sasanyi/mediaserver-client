@@ -4,15 +4,32 @@ class FlaskConfig():
     DB_SERVER = 'localhost'
     USER = 'root'
     PASSWORD = ''
-    DATABASE = 'r2mediaserver'
+    DATABASE = 'database'
     DRIVER = 'mysql'
 
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    def __init__(self, db_server: str = DB_SERVER, user: str = USER, password: str = PASSWORD):
+        self._db_server = db_server
+        self._user = user
+        self._password = password
+
     @property
     def SQLALCHEMY_DATABASE_URI(self):
-        return '{}://{}:{}@{}/{}'.format(self.DRIVER, self.USER, self.PASSWORD, self.DB_SERVER, self.DATABASE)
+        return f"{self.DRIVER}://{self.database_user}:{self.database_password}@{self.db_server}/{self.DATABASE}"
+
+    @property
+    def db_server(self) -> str:
+        return self._db_server
+
+    @property
+    def database_user(self) -> str:
+        return self._user
+
+    @property
+    def database_password(self) -> str:
+        return self._password
 
 
 class Config():
