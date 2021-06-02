@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Type, Any, TypeVar
+from typing import Any, TypeVar
 
 
 def find_files_on_path_with_patterns(d: str, patterns: list) -> list:
@@ -15,5 +15,5 @@ class NoPublicConstructor(type):
             f"{cls.__module__}.{cls.__qualname__} has no public constructor"
         )
 
-    def _create(cls: Type[T], *args: Any, **kwargs: Any) -> T:
+    def _create(cls: T, *args: Any, **kwargs: Any) -> T:
         return super().__call__(*args, **kwargs)  # type: ignore

@@ -1,33 +1,16 @@
-import datetime as dt
-from pytest import fixture
-from app.common.models.user import User
-
-EMAIL_ADDRESS = "sample@email.hu"
-USERNAME = "Mr Sample"
-PASSWORD_HASH = "0123456789"
-PUBLIC_ID = "1"
+import pytest
+from tests.defaults import EMAIL_ADDRESS, USERNAME, PUBLIC_ID
 
 
-def user_factory(**kwargs) -> User:
-    user = User()
-    user.id = kwargs.get("id", 1)
-    user.email = kwargs.get("email", EMAIL_ADDRESS)
-    user.registered_on = kwargs.get("registered_on", dt.datetime.utcnow())
-    user.admin = kwargs.get("admin", False)
-    user.public_id = kwargs.get("public_id", PUBLIC_ID)
-    user.username = kwargs.get("username", USERNAME)
-    user.password_hash = kwargs.get("password_hash", PASSWORD_HASH)
-
-    return user
-
-
-@fixture
-def get_all_users_fixture():
-    yield lambda: [user_factory()]
-
-
+@pytest.mark.usefixtures("manage_tables")
 class TestUserController:
-    def test_get_controller_returns_the_expected_user(self, client):
+    def test_get_controller_returns_empty_list_if_there_are_no_users(self, client):
+        response = client.get("/user/")
+        assert response.json == []
+
+    def test_get_controller_returns_the_expected_user(self, client, session, user_factory):
+        session.add(user_factory())
+
         expected_response = [
             {
                 "email": EMAIL_ADDRESS,

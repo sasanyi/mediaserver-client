@@ -1,0 +1,4 @@
+EMAIL_ADDRESS = "sample@email.hu"
+USERNAME = "Mr Sample"
+PASSWORD_HASH = "0123456789"
+PUBLIC_ID = "1"

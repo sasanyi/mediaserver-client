@@ -1,53 +1,64 @@
-from _pytest.fixtures import fixture
+from flask.app import Flask
 import pytest
 
 from flask_injector import FlaskInjector
+from sqlalchemy.orm import Session
 from injector import Binder, singleton
 
-from app.app import create_app
-from app.common.config import Config, FlaskConfig
-from app.common.models.user import User
+from app.app import create_app, db
+from app.common.config import FlaskConfig
+from app.common.repositories.user_repository import UserRepository
 from app.webservice.blueprint import blueprint
-from app.webservice.services.user_service import UserServiceAbstract, UserService
+from app.webservice.services.user_service import UserService
 
-
-@fixture
-def user_service_mock(get_all_users_fixture):
-    class UserServiceMock(UserServiceAbstract):
-        def save_new_user(self, user: dict) -> bool:
-            pass
-
-        def get_user_by_id(self, id: str) -> User:
-            pass
-
-        def get_all_users(self) -> list:
-            return get_all_users_fixture()
-    
-    yield UserServiceMock
+from tests.factories import *
 
 
 class TestConfig:
     def flask_config(self) -> FlaskConfig:
-        return FlaskConfig()
+        return FlaskConfig("mediaserver-mysql", "admin", "admin")
 
 
 @pytest.fixture(scope="session")
-def test_config() -> Config:
-    yield TestConfig()
+def test_modules() -> callable:
+    def _test_modules(binder: Binder):
+        binder.bind(UserRepository, to=UserRepository, scope=singleton)
+        binder.bind(UserService, to=UserService, scope=singleton)
+    
+    yield _test_modules
 
 
-@pytest.fixture
-def test_modules(user_service_mock) -> callable:
-    def test_binder(binder: Binder):
-        binder.bind(UserService, to=user_service_mock, scope=singleton)
-
-    yield test_binder
-
-
-@pytest.fixture
-def client(test_config, test_modules):
-    """A test client for the app."""
-    app = create_app(test_config)
+@pytest.fixture(scope="session")
+def app(test_modules: callable) -> Flask:
+    app = create_app(TestConfig())
     app.register_blueprint(blueprint)
+    app.app_context().push()
     FlaskInjector(app=app, modules=[test_modules])
+
+    yield app
+
+
+@pytest.fixture(scope="session")
+def manage_tables(app: Flask):
+    app.app_context().push()
+    db.create_all()
+
+    yield
+
+    db.drop_all()
+
+
+@pytest.fixture
+def session(manage_tables: None) -> Session:
+    """Returns an sqlalchemy session"""
+
+    db.session.commit()
+    yield db.session()
+    db.session.rollback()
+    db.session.close_all()
+
+
+@pytest.fixture
+def client(app):
+    """A test client for the app."""
     yield app.test_client()
