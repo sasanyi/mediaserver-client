@@ -25,15 +25,21 @@ ___
     * ### docker _( enough because everything happens in the docker containers )_
 
 
+* ### The whole project is controllable via make commands:
 * ## CLI - Makefile _( for Unix systems )_
-    * ### The whole project is controllable via make commands
-        1. #### **make image-build**
-        2. #### **make network-create**
-        3. #### **make venv**
-        4. #### **make install**
+    * ### project startup
+            1. make image-build
+            2. make network-create
+            3. make venv
+            4. make install
+    * ### developer commands
+            - make test
 
 * ## Docker commands _( where there is no shell )_
-    1. #### **docker-compose --file ./configs/docker/docker-compose.yml build mediaserver**
-    2. #### **docker network create mediaserver-network**
-    3. #### **docker-compose --file ./configs/docker/docker-compose.yml --project-name mediaserver-1 run --user=user --rm mediaserver python3 -m venv .venv**
-    4. #### **docker-compose --file ./configs/docker/docker-compose.yml --project-name mediaserver-1 run --user=user --rm mediaserver .venv/bin/pip install -r requirements.txt**
+    * ### project startup
+            1. docker-compose --file ./configs/docker/docker-compose.yml build mediaserver
+            2. docker network create mediaserver-network
+            3. docker-compose --file ./configs/docker/docker-compose.yml --project-name mediaserver-1 run --user=user --rm mediaserver python3 -m venv .venv
+            4. docker-compose --file ./configs/docker/docker-compose.yml --project-name mediaserver-1 run --user=user --rm mediaserver .venv/bin/pip install -r requirements.txt
+    * ### developer commands
+            - docker-compose --file ./configs/docker/docker-compose.yml --project-name mediaserver-1 run --user=user --rm mediaserver pytest -svv test

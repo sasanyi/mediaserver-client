@@ -9,7 +9,8 @@ from tests.defaults import EMAIL_ADDRESS, PASSWORD_HASH, PUBLIC_ID, USERNAME
 def user_factory():
     def _user_factory(**kwargs) -> User:
         user = User()
-        user.id = kwargs.get("id", 1)
+        if "id" in kwargs:
+            user.id = kwargs["id"]
         user.email = kwargs.get("email", EMAIL_ADDRESS)
         user.registered_on = kwargs.get("registered_on", dt.datetime.utcnow())
         user.admin = kwargs.get("admin", False)

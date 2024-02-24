@@ -1,9 +1,9 @@
-from flask.app import Flask
 import pytest
-
+from flask.app import Flask
+from flask.testing import FlaskClient
 from flask_injector import FlaskInjector
-from sqlalchemy.orm import Session
 from injector import Binder, singleton
+from sqlalchemy.orm.session import Session, close_all_sessions
 
 from app.app import create_app, db
 from app.common.config import FlaskConfig
@@ -14,9 +14,15 @@ from app.webservice.services.user_service import UserService
 from tests.factories import *
 
 
+def clear_data(session):
+    for table in reversed(db.metadata.sorted_tables):
+        session.execute(table.delete())
+    session.commit()
+
+
 class TestConfig:
     def flask_config(self) -> FlaskConfig:
-        return FlaskConfig("mediaserver-mysql", "admin", "admin")
+        return FlaskConfig(db_server="mediaserver-mysql", user="admin", password="admin")
 
 
 @pytest.fixture(scope="session")
@@ -51,14 +57,16 @@ def manage_tables(app: Flask):
 @pytest.fixture
 def session(manage_tables: None) -> Session:
     """Returns an sqlalchemy session"""
-
     db.session.commit()
-    yield db.session()
-    db.session.rollback()
-    db.session.close_all()
+    session = db.session()
+    
+    yield session
+    
+    clear_data(session)
+    close_all_sessions()
 
 
 @pytest.fixture
-def client(app):
+def client(app) -> FlaskClient:
     """A test client for the app."""
     yield app.test_client()

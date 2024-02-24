@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from flask import request
 from flask_restx import Resource
 from injector import inject
@@ -22,24 +24,18 @@ class UserRoot(Resource):
         """List all registered users"""
         return self.user_service.get_all_users()
 
-    @api.response(201, 'User successfully created.')
+    @api.response(HTTPStatus.CREATED, 'User successfully created.')
     @api.doc('create a new user')
     @api.expect(_user, validate=True)
     def post(self):
         """Creates a new User """
         data = request.json
         if self.user_service.save_new_user(data):
-            response_object = {
-                'status': 'success',
-                'message': 'Successfully registered.'
-            }
-            return response_object, 201
+            response_object = {'status': 'success', 'message': 'Successfully registered.'}
+            return response_object, HTTPStatus.CREATED
         else:
-            response_object = {
-                'status': 'fail',
-                'message': 'User already exists. Please Log in.',
-            }
-            return response_object, 409
+            response_object = {'status': 'fail', 'message': 'User already exists. Please Log in.'}
+            return response_object, HTTPStatus.CONFLICT
 
 
 @api.route('/<public_id>')

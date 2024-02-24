@@ -57,3 +57,9 @@ venv-remove: ## Remove virtualenv from the project
 
 install: ## Install project specific packages from requirements.txt
 	$(call docker_compose_run) .venv/bin/pip install -r requirements.txt
+
+## _________________________________________
+## DEV COMMANDS:
+
+test: ## Run all tests
+	$(call docker_compose_run) pytest -svv tests
